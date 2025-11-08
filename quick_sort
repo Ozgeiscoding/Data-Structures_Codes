@@ -1,0 +1,52 @@
+#include <stdio.h>
+
+void quicksort(int D[], int left, int right) {
+    int k, j, q, temp;
+
+    // Partition the array into two parts
+    k = left;
+    j = right;
+    q = D[(left + right) / 2];   // pivot
+    
+    do {
+        while ((D[k] < q) && (k < right))
+            k++;
+        while ((D[j] > q) && (j > left))
+            j--;
+        if (k <= j) { // exchange D[k] & D[j]
+            temp = D[k];
+            D[k] = D[j];
+            D[j] = temp;
+            k++;
+            j--;
+        }
+    } while (k <= j);
+    
+    // Sort each part using quicksort
+    if (left < j)
+        quicksort(D, left, j);
+    if (k < right)
+        quicksort(D, k, right);
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90, 5, 77, 30};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int i;
+    
+    printf("Orijinal dizi: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    quicksort(arr, 0, size - 1);
+    
+    printf("Siralanmis dizi: ");
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}
