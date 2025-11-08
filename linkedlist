@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Linked list yapısı tanımı
+typedef struct linkedList{
+    int info;
+    char message[100];
+    struct linkedList *next;
+} SIMPLE_LIST;
+
+// Global pointer'lar
+SIMPLE_LIST *first = NULL;
+SIMPLE_LIST *last = NULL;
+
+// Insert fonksiyonu - slayttaki aynen
+int insert(SIMPLE_LIST *p){
+    if (first != NULL){
+        last->next = p;
+        p->next = NULL;
+        last = p;
+    }
+    else {
+        first = p;
+        last = p;
+        p->next = NULL;
+    }
+    return 0;
+}
+
+// Display fonksiyonu - slayttaki aynen
+int displayList(){
+    SIMPLE_LIST *p;
+    p = first;
+    if (p == NULL){
+        printf("List is empty\n");
+        return -1;
+    }
+    while (p != NULL){
+        printf(" %d %s \n", p->info, p->message);
+        p = p->next;
+    }
+    return 0;
+}
+
+// Search fonksiyonu - slayttaki aynen
+SIMPLE_LIST *search(int key){
+    SIMPLE_LIST *p;
+    p = first;
+    while (p){
+        if (p->info == key)
+            return p;
+        p = p->next;
+    }
+    return NULL;
+}
+
+// Delete fonksiyonu - slayttaki aynen
+SIMPLE_LIST *delete(int key){
+    SIMPLE_LIST *p, *previous;
+    p = first;
+    previous = NULL;
+    
+    // search for the element to be deleted
+    while (p){
+        if (key == p->info)
+            break;
+        previous = p;
+        p = p->next;
+    }
+    
+    if (p != NULL){ //if found
+        if (previous == NULL){  
+            // if first element will be deleted
+            if (first == last){
+                // if list has one element
+                first = NULL;
+                last = NULL;
+            }
+            else {
+                first = first->next;
+            }
+        }
+        else{
+            //delete from middle or last
+            previous->next = p->next;
+            if (previous->next == NULL){
+                //last element is deleted
+                last = previous;
+            }
+        }
+        free(p);
+        return p;
+    }
+    else {     //not found
+        return NULL;
+    }
+}
+
+// Yeni node oluşturma fonksiyonu
+SIMPLE_LIST *createNode(int info, const char *message) {
+    SIMPLE_LIST *newNode = (SIMPLE_LIST*)malloc(sizeof(SIMPLE_LIST));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    newNode->info = info;
+    strcpy(newNode->message, message);
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Main fonksiyonu - test için
+int main() {
+    int choice, info, searchKey, deleteKey;
+    char message[100];
+    SIMPLE_LIST *result, *newNode;
+    
+    printf("=== Singly Linked List Implementation ===\n");
+    
+    while(1) {
+        printf("\n1. Add element to list\n");
+        printf("2. Display all elements\n");
+        printf("3. Search element\n");
+        printf("4. Delete element\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch(choice) {
+            case 1:
+                printf("Enter info (number): ");
+                scanf("%d", &info);
+                printf("Enter message: ");
+                scanf("%s", message);
+                
+                newNode = createNode(info, message);
+                if (newNode != NULL) {
+                    insert(newNode);
+                    printf("Element added successfully!\n");
+                }
+                break;
+                
+            case 2:
+                printf("\nList elements:\n");
+                displayList();
+                break;
+                
+            case 3:
+                printf("Enter info to search: ");
+                scanf("%d", &searchKey);
+                result = search(searchKey);
+                if (result != NULL) {
+                    printf("Element found: %d %s\n", result->info, result->message);
+                } else {
+                    printf("Element not found!\n");
+                }
+                break;
+                
+            case 4:
+                printf("Enter info to delete: ");
+                scanf("%d", &deleteKey);
+                result = delete(deleteKey);
+                if (result != NULL) {
+                    printf("Element deleted successfully!\n");
+                } else {
+                    printf("Element not found for deletion!\n");
+                }
+                break;
+                
+            case 5:
+                printf("Exiting program...\n");
+                
+                // Belleği temizle
+                while (first != NULL) {
+                    SIMPLE_LIST *temp = first;
+                    first = first->next;
+                    free(temp);
+                }
+                exit(0);
+                
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+    
+    return 0;
+}
