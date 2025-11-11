@@ -1,0 +1,83 @@
+#include <stdio.h>
+
+// Heap boyutu (global değişken)
+int heap_size;
+
+// Sol çocuğun indeksi
+int left(int i) {
+    return (2 * i + 1);
+}
+
+// Sağ çocuğun indeksi
+int right(int i) {
+    return (2 * i + 2);
+}
+
+// Heapify işlemi
+void heapify(int D[], int i) {
+    int left_child, right_child, max, temp;
+    left_child = left(i);
+    right_child = right(i);
+
+    // i, sol ve sağ arasında en büyük olanı bul
+    if ((left_child <= heap_size) && (D[left_child] > D[i]))
+        max = left_child;
+    else
+        max = i;
+
+    if ((right_child <= heap_size) && (D[right_child] > D[max]))
+        max = right_child;
+
+    // Eğer max, i değilse yer değiştir ve recursive çağır
+    if (max != i) {
+        temp = D[max];
+        D[max] = D[i];
+        D[i] = temp;
+        heapify(D, max);
+    }
+}
+
+// Heap oluşturma
+void build_heap(int D[], int n) {
+    int i;
+    heap_size = n - 1;
+
+    // Dizinin ortasından başlayarak heapify uygula
+    for (i = (n - 1) / 2; i >= 0; i--)
+        heapify(D, i);
+}
+
+// Heap sort algoritması
+void heapsort(int D[], int n) {
+    int i, temp;
+    build_heap(D, n);
+    for (i = n - 1; i >= 1; i--) {
+        // Kök ile son elemanı yer değiştir
+        temp = D[i];
+        D[i] = D[0];
+        D[0] = temp;
+
+        heap_size--;
+        heapify(D, 0);
+    }
+}
+
+int main() {
+    int D[] = { 4, 10, 3, 5, 1 };
+    int n = sizeof(D) / sizeof(D[0]);
+    int i;
+
+    printf("Orijinal dizi: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", D[i]);
+    printf("\n");
+
+    heapsort(D, n);
+
+    printf("Siralanmis dizi: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", D[i]);
+    printf("\n");
+
+    return 0;
+}
